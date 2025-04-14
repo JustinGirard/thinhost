@@ -1,0 +1,7 @@
+{
+    "NOTE_IGNORE":"This file is given to a http client",
+    "protocol": "http",
+    "port": "5000",
+    "host": "localhost",
+    "url": "/do_upload"
+}

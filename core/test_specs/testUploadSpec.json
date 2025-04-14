@@ -1,0 +1,8 @@
+{
+    "NOTE_IGNORE":"This is the required data for a test upload",    
+    "token": "alpha123",
+    "filename": "demo_file_2.txt",
+    "filepath": "./client/",
+    "stream": null,
+    "do_overwrite":true
+} 

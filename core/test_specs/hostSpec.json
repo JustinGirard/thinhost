@@ -1,0 +1,10 @@
+{
+    "NOTE_IGNORE":"This file is secret on the server",
+    "web_html_dir":"./server/static_html",
+    "upload_dir":"./server/flask_uploaded",
+    "url":"/do_upload",
+    "port":"5000",
+    "host":"0.0.0.0",
+    "protocol":"http",
+    "tokens":"alpha123,bravo456,charlie789"
+}
