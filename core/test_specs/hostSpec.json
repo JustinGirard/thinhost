@@ -6,5 +6,5 @@
     "port":"5000",
     "host":"0.0.0.0",
     "protocol":"http",
-    "tokens":"alpha123,bravo456,charlie789"
+    "tokens":"<<DSH_SERVER_TOKEN_LIST>>"
 }

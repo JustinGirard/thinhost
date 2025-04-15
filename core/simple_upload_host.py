@@ -254,6 +254,9 @@ class UploadService(BaseService):
     def _cmd_test(cls):
         # python simple_upload_host.py upload_example !fileSpec=./test_specs/testUploadSpec.json !serverAddy=./test_specs/hostAddress.json
         original_cwd = os.getcwd()
+        #hostSpec = cls.tHostSpec(kwargs['hostSpec'])
+        #serverDat = cls.tHostSpec(kwargs['serverDat'])
+        #file = cls.tHostSpec(kwargs['file'])
 
         hostSpec = cls.tHostSpec({
              cls.tHostSpec.f_web_html_dir:"./server/static_html",
@@ -262,7 +265,7 @@ class UploadService(BaseService):
              cls.tHostSpec.f_port:"5000",
              cls.tHostSpec.f_host:"0.0.0.0",
              cls.tHostSpec.f_protocol:"http",
-             cls.tHostSpec.f_tokens:"alpha123,bravo456,charlie789"
+             cls.tHostSpec.f_tokens:"<<DSH_CLIENT_TOKEN_LIST>>"
         })
         
         serverDat = cls.tHostAddress({
@@ -273,10 +276,11 @@ class UploadService(BaseService):
         })     
 
         file = cls.tClientUploadData({
-                cls.tClientUploadData.f_token:"alpha123",
+                cls.tClientUploadData.f_token:"<<DSH_CLIENT_TOKEN>>",
                 cls.tClientUploadData.f_filename:"demo_file_2.txt",
                 cls.tClientUploadData.f_filepath:"./client/",
                 cls.tClientUploadData.f_stream : open("demo_file_2.txt", "r")})
+        
         try:
             #os.chdir(tmpdir)
             #print("[TEST] Changed working directory to:", tmpdir)
@@ -326,6 +330,8 @@ class UploadService(BaseService):
 
 
 if __name__ == "__main__":
+    from dotenv import load_dotenv
+    load_dotenv()     
     UploadService.run_cli()
 # python simple_upload_host.py launch !server=./test_specs/hostSpec.json 
 # python simple_upload_host.py upload_file !fileSpec=./test_specs/testUploadSpec.json !serverAddy=./test_specs/hostAddress.json

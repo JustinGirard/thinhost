@@ -1,6 +1,6 @@
 {
     "NOTE_IGNORE":"This is the required data for a test upload",    
-    "token": "alpha123",
+    "token": "<<DSH_CLIENT_TOKEN>>",
     "filename": "demo_file_2.txt",
     "filepath": "./client/",
     "stream": null,
