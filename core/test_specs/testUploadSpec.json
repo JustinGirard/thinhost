@@ -1,8 +1,9 @@
 {
-    "NOTE_IGNORE":"This is the required data for a test upload",    
-    "token": "<<DSH_CLIENT_TOKEN>>",
+    "FILE_NOTE_IGNORE": "This is the required data for a test upload",
+    "token": "aaaaaa",
     "filename": "demo_file_2.txt",
-    "filepath": "./client/",
+    "filepath": "./upload_root/",
+    "stream_source": "./__client/demo_file_2.txt",
     "stream": null,
-    "do_overwrite":true
-} 
+    "do_overwrite": true
+}

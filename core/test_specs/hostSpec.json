@@ -1,10 +1,11 @@
 {
-    "NOTE_IGNORE":"This file is secret on the server",
-    "web_html_dir":"./server/static_html",
-    "upload_dir":"./server/flask_uploaded",
-    "url":"/do_upload",
-    "port":"5000",
-    "host":"0.0.0.0",
-    "protocol":"http",
-    "tokens":"<<DSH_SERVER_TOKEN_LIST>>"
+    "HOST_NOTE_IGNORE": "This file is secret on the server",
+    "web_html_dir": "./__server/static_html",
+    "upload_dir": "./__server/flask_uploaded",
+    "url": "/do_upload",
+    "has_file_uri": "/has_file",
+    "port": "5000",
+    "host": "0.0.0.0",
+    "protocol": "http",
+    "tokens": "<<DSH_SERVER_TOKEN_LIST>>"
 }
