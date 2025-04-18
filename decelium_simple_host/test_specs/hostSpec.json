@@ -3,7 +3,7 @@
     "web_html_dir": "./__server/static_html",
     "upload_dir": "./__server/flask_uploaded",
     "url": "/do_upload",
-    "has_file_uri": "/has_file",
+    "command_uri": "/cmd",
     "port": "5000",
     "host": "0.0.0.0",
     "protocol": "http",

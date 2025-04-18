@@ -34,7 +34,7 @@ class TestUploadService(unittest.TestCase):
             "web_html_dir":f"{self.server_root}/static_html",
             "upload_dir":f"{self.server_root}/flask_uploaded",
             "url":"/do_upload",
-            "has_file_uri":"/has_file",
+            "command_uri":"/cmd",
             "port":"5000",
             "host":"0.0.0.0",
             "protocol":"http",
@@ -47,7 +47,7 @@ class TestUploadService(unittest.TestCase):
             "port": "5000",
             "host": "localhost",
             "url": "/do_upload",
-            "has_file_uri": "/has_file"
+            "command_uri": "/cmd"
         }
         # File specification used by UploadService.tClientUploadData.
         self.baseFileSpec = UploadService.tClientUploadData({
