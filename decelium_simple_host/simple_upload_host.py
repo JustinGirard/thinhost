@@ -11,6 +11,13 @@ from decelium_wallet.commands.BaseData import BaseData
 from nodejobs.jobs import Jobs
 import requests
 from typing import Protocol, runtime_checkable
+
+import importlib.util, sys
+spec = importlib.util.find_spec("decelium_core_data")
+print("spec:", spec)
+print("sys.path:", *sys.path, sep="\n  ")
+
+
 from decelium_core_data.DDBFolder import DDBFolder
 
 
@@ -535,9 +542,10 @@ class UploadService(BaseService):
         
 
 if __name__ == "__main__":
-    from dotenv import load_dotenv
-    load_dotenv()     
-    UploadService.run_cli()
+    #from dotenv import load_dotenv
+    #load_dotenv()     
+    #UploadService.run_cli()
+    print(DDBFolder)
 # python simple_upload_host.py launch ![server=./test_specs/hostSpec.json]!
 # python simple_upload_host.py upload_file ![fileSpec=./test_specs/testUploadSpec.json]! ![serverAddy=./test_specs/hostAddress.json]!
 # python simple_upload_host.py test fileSpec=![./test_specs/testUploadSpec.json]! hostAddress=![./test_specs/hostAddress.json]! hostSpec=![./test_specs/hostSpec.json]!
