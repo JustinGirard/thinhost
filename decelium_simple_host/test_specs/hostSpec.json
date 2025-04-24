@@ -1,11 +1,20 @@
 {
     "HOST_NOTE_IGNORE": "This file is secret on the server",
-    "web_html_dir": "./__server/static_html",
-    "upload_dir": "./__server/flask_uploaded",
+    "upload_dir": "./__server/data/sites",
+    "settings_dir": "./__server/data/settings",
+    "published": [
+        {
+            "domain": "localhost",
+            "entity_id": {
+                "filename": "./temp_site/",
+                "filepath": ""
+            }
+        }
+    ],
     "url": "/do_upload",
     "command_uri": "/cmd",
-    "port": "5000",
+    "port": "5122",
     "host": "0.0.0.0",
     "protocol": "http",
-    "tokens": "<<DSH_SERVER_TOKEN_LIST>>"
+    "tokens": "alpha444,aaaaaa,ghdsogsdj"
 }

@@ -1,7 +1,7 @@
 {
     "ADDY_NOTE_IGNORE": "This file is given to a http client",
     "protocol": "http",
-    "port": "5000",
+    "port": "5122",
     "host": "localhost",
     "url": "/do_upload",
     "command_uri": "/cmd"

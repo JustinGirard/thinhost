@@ -2,7 +2,8 @@
     "FILE_NOTE_IGNORE": "This is the required data for a test upload",
     "token": "aaaaaa",
     "filename": "demo_file_2.txt",
-    "filepath": "./upload_root/",
+    "attrib": {},
+    "filepath": "./temp_site/",
     "stream_source": "./__client/demo_file_2.txt",
     "stream": null,
     "do_overwrite": true
