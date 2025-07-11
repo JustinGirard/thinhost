@@ -14,7 +14,11 @@ from typing import Protocol, runtime_checkable, List,Any
 from decelium_core_data.DDBFolder import DDBFolder
 import datetime
 import typing
-
+import psutil, inspect
+from flask_cors import CORS
+from decelium_core_data.generic_entity import DataReadable
+from werkzeug.datastructures import FileStorage
+DataReadable.register(FileStorage)     
 
 class jsondateencode_local:
     def loads(dic):
@@ -39,23 +43,18 @@ class jsondateencode_local:
                 except:
                     pass
         return dct
+'''
+
+      "resp.upload_file": "{'nonce': '466e07e11e3a4fae92279aac614af6ff', 'value': False, 'error': 'Server could not process recordCant process record Traceback (most recent call last):\\n  File \"/Users/computercomputer/justinops/decelium_simple_host/decelium_simple_host/simple_upload_host.py\", line 947, in upload\\n    return cls._upload_file_p2(request,cls.currentHa)\\n           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/Users/computercomputer/justinops/decelium_simple_host/decelium_simple_host/simple_upload_host.py\", line 630, in _upload_file_p2\\n    obj = DDBFolder.create_file(\\n        {\\n    ...<5 lines>...\\n        },ddbFolderCtx\\n    )\\n  File \"/Users/computercomputer/justinops/decelium_core_data/decelium_core_data/DDBFolder.py\", line 419, in create_file\\n    args = cls.NewArgs(args)\\n  File \"/Users/computercomputer/justinops/decelium_wallet/decelium_wallet/commands/BaseData.py\", line 399, in __init__\\n    self.validate_and_convert(key, expected_type, init_dict)\\n    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/Users/computercomputer/justinops/decelium_wallet/decelium_wallet/commands/BaseData.py\", line 281, in validate_and_convert\\n    raise TypeError(f\"a Expected type {expected_type} for key \\'{key}\\', got {type(new_val)} in  {type(self)}   -- {message}\")\\nTypeError: a Expected type <class \\'decelium_core_data.generic_entity.DataReadable\\'> for key \\'stream\\', got <class \\'werkzeug.datastructures.file_storage.FileStorage\\'> in  <class \\'decelium_core_data.DDBFolder.DDBFolder.NewArgs\\'>   -- \\n', 'attrib': {}}",
+
+'''
 
 
 class UploadService(BaseService):
-    #class SessionSystem:
-    #    # Connect
-    #    # Reconnect
-    #    # Close
-    #    # GetStatus
-    #    # 
-    #    pass
-    @runtime_checkable
-    class DataReadable(Protocol):
-        def read(self, size: int = -1):
-            pass
-        def close(self) -> None:
-            pass
-    
+
+
+
+
     class tTransferProgress(BaseData):
         f_size = "size"
         f_progress = "progress"
@@ -74,35 +73,7 @@ class UploadService(BaseService):
             }
             optional = {}
             return required, optional 
-    '''
-    class Command(BaseData):
-        f_command_id = "command_id"      
-        f_executor_id = "executor_id" 
-        f_args = "args" 
-        f_data = "data" 
-        f_auth = "auth" 
-        def __init__(
-                self,
-                in_dict=None,
-                trim=False,
-                *,
-                command_id=None,
-                executor_id="anon",
-                args=None,
-                data=None,
-                auth=None
-            ):
-            # kwargs‑style shortcut
-            if any([command_id, executor_id, args, data, auth]) or in_dict is None:
-                in_dict = {
-                    self.f_command_id: command_id,
-                    self.f_executor_id: executor_id,
-                    self.f_args:       args or {},
-                    self.f_data:       data or {},
-                    self.f_auth:       auth or {}
-                }
-            super().__init__(in_dict, trim)   
-    '''
+  
     class Command(BaseData):
         f_command_id  = "command_id"
         f_executor_id = "executor_id"
@@ -222,6 +193,7 @@ class UploadService(BaseService):
         f_filename = "filename" # THE DESTINATION FILENAME        
         f_filepath = "filepath" # THE DESTINATION FILE PATH
         f_attrib = "attrib" # THE DESTINATION FILE PATH
+        f_do_overwrite = "do_overwrite" # THE DESTINATION FILE PATH
 
         def get_defaults(self):
             return {
@@ -230,12 +202,14 @@ class UploadService(BaseService):
         def get_keys(self):
             return {
                 self.f_token: str,
-                self.f_stream: UploadService.DataReadable,
+                self.f_stream: DataReadable,
                 self.f_stream_source: str,
                 self.f_filename: str,
                 self.f_attrib: dict,
                 self.f_filepath: str,
-            },{}
+            },{
+                self.f_do_overwrite: bool,
+            }
         
         def do_validation(self,key,value):
             #print(f"Validating  NewArgs- {key}:{value}")
@@ -264,9 +238,6 @@ class UploadService(BaseService):
                 value =  open(self['stream_source'],"rb")
                 self[key] =  value
             return value
-        
-
-        
 
     class tHostAddress(BaseData):
         f_protocol = "protocol"
@@ -312,9 +283,10 @@ class UploadService(BaseService):
         f_tokens   = "tokens"
         f_command_uri = "command_uri"
         f_published = "published"
+        f_open_ai_key = "open_ai_key"
+        f_do_overwrite = "do_overwrite"
         def get_keys(self):
             required = {
-                self.f_published:  list, #TESTtyping.List[UploadService.tPublishedSite],
                 self.f_tokens: str,
                 self.f_upload_dir: str,
                 self.f_settings_dir: str,
@@ -323,8 +295,15 @@ class UploadService(BaseService):
             ha_required, _ = super().get_keys()
             # Now update 'required' in-place.
             required.update(ha_required)
-            return required, {}
-        
+            return required, {
+                self.f_published:  list, #TESTtyping.List[UploadService.tPublishedSite],
+                self.f_open_ai_key : str,
+                self.f_do_overwrite : bool
+            }
+        def do_pre_process(self, in_dict):
+            if self.f_published not in in_dict:
+                in_dict[self.f_published ] = []
+            return super().do_pre_process(in_dict)
         def do_validation(self, key, value):
             # validate site_roots is a list of published‐site specs
             if key == self.f_published :
@@ -647,6 +626,7 @@ class UploadService(BaseService):
                 'path': client_filepath,
                 'do_overwrite':True,
         })
+
         obj = DDBFolder.create_file(
             {
                 #'owner_id': "12345",
@@ -660,32 +640,50 @@ class UploadService(BaseService):
         obj = DDBFolder.Record(obj) 
         #cls.on_upload(save_path)
         return (jsondateencode_local.dumps(obj), 201)        
-
-
+    @classmethod
+    def MakeJobs(cls,ha):
+        #ha = cls.tHostSpec(ha)
+        jobs = Jobs(ha['settings_dir']+"/jobs")
+        return jobs
     @classmethod
     def _cmd_start(cls, **kwargs):
         ha = cls.tHostSpec(kwargs)
         cmdDict = BaseService.flatten(kwargs)
         cmdArgs = BaseService.to_arg_string(cmdDict)
-        jobs = Jobs()
-        run_command = "python3 "+os.path.abspath(__file__)+" launch "+cmdArgs
-        result = jobs.run(command= run_command, job_name="http_upload", cwd = os.getcwd(), envs = os.environ.copy())
+        jobs = cls.MakeJobs(ha)
+        print(f"_cmd_start kwargs: {kwargs}")
+        print(f"\n\n")
+        print(f"_cmd_start cmdDict: {cmdDict}")
+        print(f"\n\n")
+        print(f"_cmd_start cmdArgs: {cmdArgs}")
+        print(f"\n\n")
+        module = sys.modules[cls.__module__]
+        candidate = getattr(module, "__file__", None)        
+        # or more robustly:
+        source = inspect.getsourcefile(cls) or candidate
+        script = os.path.abspath(source)
+
+        run_command = f"{sys.executable} "+script+" launch "+cmdArgs
+        print(f"_cmd_start run_command 2: {run_command}")
+        print(f"\n\n")
+        result = jobs.run(command= run_command, job_id="http_upload", cwd = os.getcwd())
         return jobs.list_status({'dirname':"http_upload"})
     
     @classmethod
     def _cmd_list(cls, **kwargs):
-        jobs = Jobs()
+        jobs = cls.MakeJobs(kwargs)
         return jsondateencode_local.dumps(dict(jobs.list_status({'dirname':"http_upload"})))
 
     @classmethod
     def _cmd_logs(cls, **kwargs):
-        jobs = Jobs()
-        return jobs.job_logs(job_name="http_upload")
+        jobs = cls.MakeJobs(kwargs)
+        return jobs.job_logs(job_id="http_upload")
 
     @classmethod
     def _cmd_stop(cls,  **kwargs):
-        jobs = Jobs()
-        result = jobs.stop(job_name="http_upload")
+        jobs = cls.MakeJobs(kwargs)
+
+        result = jobs.stop(job_id="http_upload")
         return jobs.list_status({'dirname':"http_upload"})
         
     @classmethod
@@ -839,17 +837,24 @@ class UploadService(BaseService):
         except Exception as err:
             return err
 
+    @classmethod
+    def _after_launch_endpoints(cls,app,hostSpec):
+        hostSpec = cls.tHostSpec(hostSpec)    
+        print("BASE LAUNCH")    
+        pass
 
     @classmethod
     def _cmd_launch(cls, **kwargs):
         print(f"Starting upload server ...")
         # **** TEMPLATE SETTINGS LOADED HERE
-        #print(json.dumps(kwargs,indent=2))
+        print(json.dumps(kwargs,indent=2))
         cls.currentHa = cls.tHostSpec(kwargs)
+        cls._kill_conflicting_process(cls.currentHa)        
         os.makedirs(cls.currentHa[cls.currentHa.f_upload_dir], exist_ok=True)
         os.makedirs(cls.currentHa[cls.currentHa.f_settings_dir], exist_ok=True)
         # **** SAVED SETTINGS LOADED HERE
-        cls.currentHa:UploadService.tHostSpec = UploadService.tHostSpec (cls._init_thenload(cls.currentHa,do_overwrite=False))
+        do_overwrite = cls.currentHa ['do_overwrite']
+        cls.currentHa:UploadService.tHostSpec = UploadService.tHostSpec (cls._init_thenload(cls.currentHa,do_overwrite=do_overwrite))
         
         
         rootDDBRecord =  DDBFolder.Record(cls._create_file_ifnexist(
@@ -862,12 +867,15 @@ class UploadService(BaseService):
                 })
             ))
 
+
+
         # Build Flask app
         app = Flask(__name__,
             static_folder=None,       
             static_url_path=None        
         )
         app.config.from_object(__name__)
+        CORS(app, resources={r"/*": {"origins": "*"}})
 
         #command_uri = ha[ha.f_command_uri]
         #port = ha[ha.f_port]
@@ -882,6 +890,7 @@ class UploadService(BaseService):
         @app.route("/", methods=["GET", "POST"])
         @app.route("/<path:u_path>", methods=["GET", "POST"])
         def index(u_path="/"):
+            #return {"path":u_path},200
             #return cls._determine_root_dir(ha)
             try:
                 root_dir = os.path.join(os.getcwd(), cls.currentHa[cls.currentHa.f_upload_dir], cls._determine_root_dir(cls.currentHa))
@@ -897,7 +906,12 @@ class UploadService(BaseService):
                         return send_from_directory(full, "index.html")                
 
                 #return Response(f"File not found at: {full}", status=404)
-                return Response(f"Missing file at  {full}:{root_dir}:{rel_path}", status=200)
+                # return Response(f"Missing file at  {full}:{root_dir}:{rel_path}", status=200)
+                try:
+                    return send_from_directory(root_dir, "index.html")
+                except Exception as e:
+                    import traceback as tb
+                    return (f"Error reading from {root_dir}--->"+tb.format_exc(),500)
             except Exception as e:
                 import traceback as tb
                 return (tb.format_exc(),500)
@@ -935,12 +949,16 @@ class UploadService(BaseService):
 
         @app.route(cls.currentHa[cls.currentHa.f_url], methods=["POST"])
         def upload():
+       
             try:
                 return cls._upload_file_p2(request,cls.currentHa)
             except Exception as e:
                 import traceback as tb
                 return (tb.format_exc(),500)
-
+        print("after launch")
+        cls._after_launch_endpoints(app,cls.currentHa)
+        print("finished")
+        #sys.exit(0)
         # Run Flask
         print(f"Starting upload server on {cls.currentHa[cls.currentHa.f_host]}:{cls.currentHa[cls.currentHa.f_port]}")
         try:
@@ -949,6 +967,27 @@ class UploadService(BaseService):
             import traceback as tb
             print(tb.format_exc())
         return "ok"
+
+    @classmethod
+    def _kill_conflicting_process(cls, currentHa):
+        """
+        Kill any other process whose command-line contains both
+        'port=<our port>' and 'simple_upload_host.py'.
+        """
+        port   = currentHa[currentHa.f_port]
+        my_pid = os.getpid()
+
+        for proc in psutil.process_iter(['pid', 'cmdline']):
+            if proc.pid == my_pid:
+                continue
+            try:
+                cmdline = proc.info['cmdline'] or []
+                if (any(arg.startswith(f"port={port}") for arg in cmdline)
+                        and any('simple_upload_host.py' in arg for arg in cmdline)):
+                    proc.terminate()
+                    proc.wait(timeout=5)
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                continue
 
     @classmethod
     def _cmd_test(cls, **kwargs):
@@ -984,6 +1023,7 @@ class UploadService(BaseService):
         print(jsondateencode_local.dumps(report,indent=4))
         return report
 
+
         
 
 if __name__ == "__main__":
@@ -991,9 +1031,12 @@ if __name__ == "__main__":
     load_dotenv()     
     UploadService.run_cli()
     #print(DDBFolder)
-# python simple_upload_host.py launch [[server=./test_specs/hostSpec.json]]
+# python simple_upload_host.py launch '[[server=./test_specs/hostSpec.json]]'
 # python simple_upload_host.py start '[[server=./test_specs/hostSpec.json]]'
 # python simple_upload_host.py upload_file '[[fileSpec=./test_specs/testUploadSpec.json]]' '[[serverAddy=./test_specs/hostAddress.json]]'
 # python simple_upload_host.py test fileSpec=[[./test_specs/testUploadSpec.json]] hostAddress=[[./test_specs/hostAddress.json]] hostSpec=[[./test_specs/hostSpec.json]]
 # python simple_upload_host.py test
 # curl -H "Host: justingirard.com" http://localhost:5123/
+
+
+
