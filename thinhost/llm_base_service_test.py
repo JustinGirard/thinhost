@@ -262,4 +262,3 @@ if __name__ == "__main__":
     unittest.main(defaultTest="TestLLMProxyService.test_chat_completions_direct")
 
     #unittest.main(defaultTest="TestLLMProxyService.test_register")
-

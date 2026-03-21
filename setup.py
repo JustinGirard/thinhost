@@ -1,17 +1,35 @@
-# setup.py
+from pathlib import Path
 from setuptools import setup, find_packages
 
-# read requirements.txt for convenience
-#with open("requirements.txt") as f:
-#    reqs = [
-#        line.strip() for line in f
-#        if line.strip() and not line.startswith("#")
-#    ]
-reqs = ""
+long_description = Path("README.md").read_text(encoding="utf-8")
+
 setup(
-    name="decelium_simple_host", 
+    name="thinhost",
     version="0.1.0",
+    description="Thin HTTP hosts for Decelium microsite workflows",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    author="Justin Girard",
+    author_email="justingirard@decelium.com",
+    url="https://github.com/Decelium/decelium_simple_host",
+    license="MIT",
+    classifiers=[
+        "Development Status :: 2 - Pre-Alpha",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3",
+    ],
     packages=find_packages(),
-    install_requires=reqs,       # <-- this is what pip reads
+    install_requires=[
+        "nodejobs>=0.3.0",
+        "flask",
+        "flask-cors",
+        "requests",
+        "httpx",
+        "psutil",
+        "python-dotenv",
+        "urllib3",
+        "werkzeug",
+    ],
     python_requires=">=3.7",
 )

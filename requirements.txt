@@ -1,8 +1,9 @@
-# local peer directories (editable install)
-# pip install -r requirements.txt   
--e ../decelium_core_data
--e ../decelium_wallet
--e ../nodejobs
-urllib3
+nodejobs>=0.3.0
+flask
+flask-cors
+requests
+httpx
 psutil
-requests  
+python-dotenv
+urllib3
+werkzeug
