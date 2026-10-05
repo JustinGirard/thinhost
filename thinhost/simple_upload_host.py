@@ -561,14 +561,25 @@ class UploadService(BaseService):
             )
         return mapped
 
+    @staticmethod
+    def _format_size_compact(num_bytes) -> str:
+        try:
+            size = float(num_bytes or 0)
+        except Exception:
+            size = 0.0
+        units = ["B", "KB", "MB", "GB", "TB"]
+        idx = 0
+        while size >= 1024.0 and idx < len(units) - 1:
+            size /= 1024.0
+            idx += 1
+        if idx == 0:
+            return f"{int(size)} {units[idx]}"
+        return f"{size:.1f} {units[idx]}"
+
     @classmethod
     def run_remote(cls, hostAddress, cmd):
-        # headers = {"Upload-Token": d[d.f_token]}
         headers = {}
-        print(type(hostAddress))
-        print(hostAddress)
         s = UploadService.tHostAddress(hostAddress)
-        # print(jsondateencode_local.dumps(cmd,indent =1))
 
         resp = requests.post(
             s.getCommandUrl(),
@@ -599,6 +610,16 @@ class UploadService(BaseService):
         for idx, transfer in mapped.items():
             transfer = cls.tTransferProgress(transfer)
             uploadRecord = cls.tClientUploadData(transfer[ts.f_data])
+            try:
+                source_path = str(uploadRecord[uploadRecord.f_stream_source])
+            except Exception:
+                source_path = ""
+            try:
+                size_bytes = int(transfer[ts.f_size])
+            except Exception:
+                size_bytes = 0
+            size_text = cls._format_size_compact(size_bytes)
+            print(f'uploading ({size_text}) "{source_path}" ...', flush=True)
             uploadEID = cls.EntityID(transfer[ts.f_data])
             args = {
                 "__command": ["upload_file"],
@@ -622,12 +643,14 @@ class UploadService(BaseService):
                 results[idx][ts.f_status] = "uploaded"
                 results[idx][ts.f_attrib]["resp.upload_file"] = str(rec)
                 results[idx][ts.f_attrib]["resp.has_file"] = str(has_file)
+                print("... upload finished", flush=True)
             else:
                 results[idx][ts.f_progress] = 0
                 results[idx][ts.f_status] = "failed"
                 results[idx][ts.f_attrib]["resp.upload_file"] = str(rec)
                 results[idx][ts.f_attrib]["resp.has_file"] = str(has_file)
                 # return results
+                print("... upload failed", flush=True)
             try:
                 results[idx][td.f_stream].close()
             except:
