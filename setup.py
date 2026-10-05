@@ -16,7 +16,6 @@ setup(
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "Intended Audience :: Developers",
-        "License :: None Granted",
         "Programming Language :: Python :: 3",
     ],
     packages=find_packages(),
