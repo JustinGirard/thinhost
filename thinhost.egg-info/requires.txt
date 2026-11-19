@@ -1,0 +1,9 @@
+nodejobs>=0.3.0
+flask
+flask-cors
+requests
+httpx
+psutil
+python-dotenv
+urllib3
+werkzeug

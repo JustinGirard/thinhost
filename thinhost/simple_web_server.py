@@ -1,3 +1,12 @@
+"""Legacy HTTP base; new command servers should use NodeJobs CommandRegistryHost.
+
+See nodejobs/README.md, "Building command servers", and
+nodejobs.dependencies.command_registry_host.CommandRegistryHost.
+Retained as the HTTP base used by CommandRegistryHost.
+"""
+
+import warnings
+
 from nodejobs.dependencies.BaseService import BaseService
 from nodejobs.dependencies.BaseData import BaseData
 from thinhost.simple_upload_host import jsondateencode_local
@@ -9,6 +18,20 @@ import base64
 
 
 class SimpleWebServer(BaseService):
+    """Legacy direct-use server; use CommandRegistryHost for new servers."""
+
+    @classmethod
+    def run_cli(cls):
+        if cls is SimpleWebServer:
+            warnings.warn(
+                "Direct SimpleWebServer use is deprecated; see nodejobs/README.md "
+                "'Building command servers' and "
+                "nodejobs.dependencies.command_registry_host.CommandRegistryHost.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+        return super().run_cli()
+
     class Command(BaseData):
         f_command_id = "command_id"
         f_data = "data"

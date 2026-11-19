@@ -1,0 +1,16 @@
+README.md
+pyproject.toml
+setup.py
+thinhost/__init__.py
+thinhost/command_registry_host.py
+thinhost/llm_base_service.py
+thinhost/llm_base_service_test.py
+thinhost/proxy_service_model.py
+thinhost/simple_upload_host.py
+thinhost/simple_upload_host_tests.py
+thinhost/simple_web_server.py
+thinhost.egg-info/PKG-INFO
+thinhost.egg-info/SOURCES.txt
+thinhost.egg-info/dependency_links.txt
+thinhost.egg-info/requires.txt
+thinhost.egg-info/top_level.txt

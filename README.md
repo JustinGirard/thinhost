@@ -2,6 +2,12 @@
 
 Thin HTTP hosts used in the Decelium microsite workflow.
 
+> **New command servers:** Direct use of `thinhost.simple_web_server.SimpleWebServer`
+> is deprecated as a server template. It remains the HTTP base for
+> `nodejobs.dependencies.command_registry_host.CommandRegistryHost`.
+> Follow NodeJobs `README.md` → “Building command servers” and
+> `nodejobs.dependencies.TestServiceComposable` for the registration pattern.
+
 ## Install
 pip install thinhost
 
